@@ -106,8 +106,13 @@ class TorchBinaryLogisticRegression:
 
         if dim is not None:
             self.network = Feedforward(dim, representation_layer_size, MLP)
+            self.dim = dim
         else:
             raise ValueError("Dimension was none when __init__ binary logistic regression model")
+
+
+    def reinitialize_model(self):
+        self.network = Feedforward(self.dim, self.representation_layer_size, self.MLP)
 
     def initialize_gaussian(self):
         with torch.no_grad():
@@ -154,6 +159,13 @@ class TorchBinaryLogisticRegression:
         prob_predictions = self.predict_prob(batch_X, inverse_data_covariance)
         thresholded_predictions = prob_predictions > threshold
         return thresholded_predictions
+
+
+    def get_thresholded_predictions(self, batch_X, threshold, inverse_data_covariance=[]):
+        prob_predictions = self.predict_prob(batch_X, inverse_data_covariance)
+        thresholded_predictions = prob_predictions > threshold
+        return thresholded_predictions
+
 
     def get_accuracy(self, batch_X, batch_y, threshold, inverse_data_covariance=[]):
         thresholded_predictions = self.get_predictions(
