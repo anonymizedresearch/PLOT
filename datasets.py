@@ -282,7 +282,7 @@ class SVMDataset:
         else:
             return (torch.from_numpy(X).float(), torch.from_numpy(Y))
 
-    def plot(self, batch_size, model=None, names=[], binary = False):
+    def plot(self, batch_size, model=None, names=[], binary = False, title = ""):
         if names == []:
             names = ["" for _ in range(self.num_groups)]
         if self.dim != 2:
@@ -376,8 +376,9 @@ class SVMDataset:
             plt.grid(True)
             plt.legend(loc="lower right")
             # IPython.embed()
+            plt.title(title)
 
-            # plt.show()
+            plt.show()
 
 
 def get_batches(protected_datasets, global_dataset, batch_size):
