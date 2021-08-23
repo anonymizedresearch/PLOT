@@ -282,7 +282,7 @@ class SVMDataset:
         else:
             return (torch.from_numpy(X).float(), torch.from_numpy(Y))
 
-    def plot(self, batch_size, model=None, names=[]):
+    def plot(self, batch_size, model=None, names=[], binary = False):
         if names == []:
             names = ["" for _ in range(self.num_groups)]
         if self.dim != 2:
@@ -299,29 +299,77 @@ class SVMDataset:
                 "violet",
                 "gray",
             ]
+            
+            binary_colors = ["black", "red"]
+            
             (X, Y, indices) = self.get_batch(batch_size, verbose=True)
             # print("xvals ", X, "yvals ", Y)
             min_x = float("inf")
             max_x = -float("inf")
-            for i in range(self.num_groups):
-                X_filtered_0 = []
-                X_filtered_1 = []
-                for j in range(len(X)):
-                    if indices[j] == i:
-                        X_filtered_0.append(X[j][0])
+                        
+           
+            if binary: 
+                positive_X_filtered_0 = []
+                positive_X_filtered_1 = []
+                
+                negative_X_filtered_0 = []
+                negative_X_filtered_1 = []
+                
+                for i in range(self.num_groups):
+                    for j in range(len(X)):
+                        group_index = indices[j]
+                        datapoint_class = self.class_list_per_center[group_index]
+                        if datapoint_class:
+                            positive_X_filtered_0.append(X[j][0])
+                            positive_Y_filetered_1.append(X[j][1])
+                        else:
+                            negative_X_filtered_0.append(X[j][0])
+                            negative_X_filtered_1.append(X[j][1])
+                            
                         if X[j][0] < min_x:
                             min_x = X[j][0]
                         if X[j][0] > max_x:
                             max_x = X[j][0]
-                        X_filtered_1.append(X[j][1])
-
+                       
                 plt.plot(
-                    X_filtered_0,
-                    X_filtered_1,
-                    "o",
-                    color=colors[i],
-                    label="{} {}".format(self.class_list_per_center[i], names[i]),
-                )
+                        positive_X_filtered_0,
+                        positive_X_filtered_1,
+                        "o",
+                        color=binary_colors[0],
+                        label="Positives",
+                    )
+
+                
+                plt.plot(
+                        negative_X_filtered_0,
+                        negative_X_filtered_1,
+                        "o",
+                        color=binary_colors[i],
+                        label="Negatives",
+                    )
+
+                
+            
+            else:
+                for i in range(self.num_groups):
+                    X_filtered_0 = []
+                    X_filtered_1 = []
+                    for j in range(len(X)):
+                        if indices[j] == i:
+                            X_filtered_0.append(X[j][0])
+                            if X[j][0] < min_x:
+                                min_x = X[j][0]
+                            if X[j][0] > max_x:
+                                max_x = X[j][0]
+                            X_filtered_1.append(X[j][1])
+
+                    plt.plot(
+                        X_filtered_0,
+                        X_filtered_1,
+                        "o",
+                        color=colors[i],
+                        label="{} {}".format(self.class_list_per_center[i], names[i]),
+                    )
             if model is not None:
                 # Plot line
                 model.plot(min_x, max_x)
