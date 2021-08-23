@@ -321,7 +321,7 @@ class SVMDataset:
                         datapoint_class = self.class_list_per_center[group_index]
                         if datapoint_class:
                             positive_X_filtered_0.append(X[j][0])
-                            positive_Y_filetered_1.append(X[j][1])
+                            positive_Y_filtered_1.append(X[j][1])
                         else:
                             negative_X_filtered_0.append(X[j][0])
                             negative_X_filtered_1.append(X[j][1])
