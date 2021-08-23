@@ -278,9 +278,9 @@ class SVMDataset:
             Y = torch.from_numpy(Y).to('cuda')
 
         if verbose:
-            return (X, Y, indices)
+            return (torch.from_numpy(X).float(), torch.from_numpy(Y), indices)
         else:
-            return (X, Y)
+            return (torch.from_numpy(X).float(), torch.from_numpy(Y))
 
     def plot(self, batch_size, model=None, names=[]):
         if names == []:
